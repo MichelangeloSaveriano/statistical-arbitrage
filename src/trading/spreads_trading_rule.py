@@ -1,11 +1,12 @@
 import pandas as pd
 import numpy as np
 from trading_rule_base import TradingRuleBase
+from ..laplacian_estimators import BaseLaplacianEstimator
 
 
 class SpreadsTradingRule(TradingRuleBase):
-    def __init__(self, laplacian_method, normalize_input=True, q=0.2):
-        self._laplacian_method = laplacian_method
+    def __init__(self, laplacian_estimator: BaseLaplacianEstimator, normalize_input=True, q=0.2):
+        self._laplacian_estimator = laplacian_estimator
         self._L = None
 
         self._normalize_input = normalize_input
@@ -26,7 +27,7 @@ class SpreadsTradingRule(TradingRuleBase):
             train_data /= self._train_std
 
         if self._L is None:
-            self._L = self._laplacian_method(train)
+            self._L = self._laplacian_estimator.fit_laplacian(train)
 
         train_spreads = train_data @ self._L
         if isinstance(train, pd.DataFrame):

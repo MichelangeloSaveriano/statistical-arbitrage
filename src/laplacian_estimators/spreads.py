@@ -115,7 +115,7 @@ def compute_LTMRF_L(use_correlations=True, use_abs=True, reltol=3e-4,
             S *= S_sign
 
         results_LGMRF = learn_connected_graph_heavy_tails(X_train, verbose=False, rho=1,
-                                              reltol=reltol, maxiter=1000)
+                                                          tol=reltol, max_iter=1000)
         L = results_LGMRF['L']
         L_sqrt = L
 

@@ -276,11 +276,12 @@ compute_augmented_lagrangian_ht <- function(w, LstarSq, Theta, J, Y, y, d, heavy
 
 def learn_connected_graph_heavy_tails(X_mat, heavy_type="student",
                                       is_covariance=False,
+                                      normalize=True,
                                       nu=3, w0=None,
                                       d=1, rho=1,
                                       update_rho=True,
-                                      maxiter=300,
-                                      reltol=1e-5,
+                                      max_iter=300,
+                                      tol=1e-5,
                                       verbose=True,
                                       mu=2, tau=2):
     # number of nodes
@@ -288,11 +289,14 @@ def learn_connected_graph_heavy_tails(X_mat, heavy_type="student",
     # number of observations
     n = X_mat.shape[0]
 
-    # standardize X_mat
-    X_mat = (X_mat - X_mat.mean(axis=0)) / X_mat.std(axis=0)
+    # normalize X_mat
+    if normalize:
+        X_mat = (X_mat - X_mat.mean(axis=0)) / X_mat.std(axis=0)
 
     # w-initialization
     w = initialize_weights(w0, p)
+
+    # L-star initialization
     if is_covariance:
         LstarSweighted = LapStar(X_mat)
     else:
@@ -306,16 +310,13 @@ def learn_connected_graph_heavy_tails(X_mat, heavy_type="student",
         else:
             LstarSweighted = sum(LstarSq)
 
-    print('L Star Correlation Matrix:\n', LapStar(np.corrcoef(X_mat.T)), '\n')
-    print('L Star Covariance Matrix:\n', LapStar(X_mat.T @ X_mat), '\n')
-    print('L Star Weighted:\n', LstarSweighted, '\n')
-    print('L Star Gaussian Weighted:\n', sum(LstarSq), '\n')
-
-    print('L Star Correlation Matrix mean:\n', LapStar(np.corrcoef(X_mat.T)).mean(), '\n')
-    print('L Star Weighted mean:', LstarSweighted.mean(), '\n')
-
-    # LstarSweighted *= LapStar(np.corrcoef(X_mat.T)).mean() / LstarSweighted.mean()
-    print('L Star Weighted Rescaled:\n', LstarSweighted, '\n')
+    # print('L Star Correlation Matrix:\n', LapStar(np.corrcoef(X_mat.T)), '\n')
+    # print('L Star Covariance Matrix:\n', LapStar(X_mat.T @ X_mat), '\n')
+    # print('L Star Weighted:\n', LstarSweighted, '\n')
+    # print('L Star Gaussian Weighted:\n', sum(LstarSq), '\n')
+    # print('L Star Correlation Matrix mean:\n', LapStar(np.corrcoef(X_mat.T)).mean(), '\n')
+    # print('L Star Weighted mean:', LstarSweighted.mean(), '\n')
+    # print('L Star Weighted Rescaled:\n', LstarSweighted, '\n')
 
 
     J = np.ones((p, p)) / p
@@ -326,7 +327,7 @@ def learn_connected_graph_heavy_tails(X_mat, heavy_type="student",
     Y = np.zeros((p, p))
     y = np.zeros(p)
 
-    it = range(maxiter)
+    it = range(max_iter)
     if verbose:
         it = tqdm(it)
 
@@ -340,7 +341,7 @@ def learn_connected_graph_heavy_tails(X_mat, heavy_type="student",
         if heavy_type == "student" and i % 50 == 0:
             LstarSweighted = sum(map(lambda LstarSq_i: LstarSq_i * compute_student_weights(w, LstarSq_i, p, nu),
                                      LstarSq))
-            print(f'{i}) L Star Weighted: {LstarSweighted}')
+            # print(f'{i}) L Star Weighted: {LstarSweighted}')
 
         grad = LstarSweighted - LapStar(Y + rho * Theta) + DegStar(y - rho * d) + rho * (LstarLw + DstarDw)
         eta = 1 / (2 * rho * (2 * p - 1))
@@ -375,7 +376,7 @@ def learn_connected_graph_heavy_tails(X_mat, heavy_type="student",
         Lw = Lwi
         Theta = Thetai
 
-        has_converged = (error < reltol) and (i > 1)
+        has_converged = (error < tol) and (i > 1)
         if has_converged:
             break
 

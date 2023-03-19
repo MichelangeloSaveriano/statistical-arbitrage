@@ -13,14 +13,13 @@ def compute_distance_matrix(data_matrix, use_correlations):
     return corr.values
 
 
-class SpreadsTradingRule(TradingRuleBase):
+class PairsDistanceTradingRule(TradingRuleBase):
     def __init__(self, p, use_correlations=True, gamma=2):
         self._p = p
         self._use_correlations = use_correlations
         self._pairs = None
         self._gamma = gamma
         self._thresholds = None
-        pass
 
     def fit(self, train, test=None):
         data_matrix = train
