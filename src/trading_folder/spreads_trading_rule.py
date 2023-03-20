@@ -52,12 +52,17 @@ class SpreadsTradingRule(TradingRuleBase):
     def transform(self, test):
         test_spreads = self.compute_spreads(test)
 
-        q_mask_short = test_spreads >= self._upper
+        lower, upper = np.quantile(test_spreads, (self._q_half, 1 - self._q_half),
+                                   axis=1).reshape((2, -1, 1))
+
+        q_mask_short = test_spreads >= upper
+        # q_mask_short = test_spreads >= self._upper
         short_mask = q_mask_short
         short_mask /= short_mask.sum(axis=1).values.reshape((-1, 1))
         short_mask = short_mask.fillna(0)
 
-        q_mask_long = test_spreads <= self._lower
+        q_mask_long = test_spreads <= lower
+        # q_mask_long = test_spreads <= self._lower
         long_mask = q_mask_long
         long_mask /= long_mask.sum(axis=1).values.reshape((-1, 1))
         long_mask = long_mask.fillna(0)

@@ -7,8 +7,8 @@ import pandas as pd
 class LaplacianGraphLearningLaplacianEstimator(BaseLaplacianEstimator):
     def __init__(self, distribution='gaussian',
                  normalize=True, w0=None,
-                 max_iter=1000, tol=1e-5,
-                 d=1, nu=None, verbose=True,
+                 max_iter=1000, tol=5e-5,
+                 d=1, nu=None, verbose=False,
                  use_abs=True,
                  laplacian_root=False, adjust_laplacian=False):
 
@@ -25,7 +25,7 @@ class LaplacianGraphLearningLaplacianEstimator(BaseLaplacianEstimator):
         if self._nu is None and self._distribution == 'student':
             self._nu = 3
 
-        self._rho = 1,
+        self._rho = 1
         self._update_rho = True
         self._mu = 2
         self._tau = 2

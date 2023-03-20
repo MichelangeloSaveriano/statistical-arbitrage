@@ -26,5 +26,5 @@ class LaplacianCorrKLaplacianEstimator(BaseLaplacianEstimator):
             L *= S_sign
 
         L = L.T
-        L_sqrt = L
-        return L, L_sqrt
+
+        return L
