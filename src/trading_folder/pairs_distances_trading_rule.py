@@ -1,6 +1,6 @@
 import pandas as pd
 import numpy as np
-from trading_rule_base import TradingRuleBase
+from .trading_rule_base import TradingRuleBase
 
 
 def compute_distance_matrix(data_matrix, use_correlations):

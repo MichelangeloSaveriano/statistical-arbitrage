@@ -1,4 +1,4 @@
-from preprocessing_base import PreprocessingBase
+from .preprocessing_base import PreprocessingBase
 
 
 class NoPreprocessing(PreprocessingBase):

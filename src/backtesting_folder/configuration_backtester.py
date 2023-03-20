@@ -1,6 +1,6 @@
 import pandas as pd
 
-from split_backtester import SplitBacktester
+from .split_backtester import SplitBacktester
 
 from ..preprocessing import PreprocessingBase
 from ..trading import TradingRuleBase
@@ -25,11 +25,22 @@ class ConfigBacktester:
         train_idx = train_idx[::self._split_window_size]
         test_idx = test_idx[::self._split_window_size]
 
-        executor = ThreadPoolExecutor()
-        self._split_backtesters = list(
-            executor.map(lambda idx: SplitBacktester(preprocessor=copy.deepcopy(self._preprocessor),
-                                                     trader=copy.deepcopy(self._trader)).fit(returns.loc[idx]),
-                         train_idx))
+        # executor = ThreadPoolExecutor()
+        # self._split_backtesters = list(
+        #     map(lambda idx: SplitBacktester(preprocessor=copy.deepcopy(self._preprocessor),
+        #                                              trader=copy.deepcopy(self._trader)).fit(returns.loc[idx]),
+        #                  train_idx))
+        self._split_backtesters = []
+        strategy_returns = []
+        for idx_tr, idx_te in zip(train_idx, test_idx):
+            backtester = SplitBacktester(preprocessor=copy.deepcopy(self._preprocessor),
+                                         trader=copy.deepcopy(self._trader))
+            backtester = backtester.fit(returns.loc[idx_tr])
+            self._split_backtesters.append(backtester)
+            backtester_returns = backtester.backtest(returns.loc[idx_te])
+            strategy_returns.append(backtester_returns)
 
-        return pd.concat([backtester.backtest(returns.loc[idx])
-                          for idx, backtester in zip(test_idx, self._split_backtesters)])
+        return pd.concat(strategy_returns)
+
+        # return pd.concat([backtester.backtest(returns.loc[idx])
+        #                   for idx, backtester in zip(test_idx, self._split_backtesters)])

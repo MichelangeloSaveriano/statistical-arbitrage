@@ -1,5 +1,5 @@
-from laplacian_estimator_base import BaseLaplacianEstimator
-from graph_learning_algorithm import learn_connected_graph_heavy_tails
+from .laplacian_estimator_base import BaseLaplacianEstimator
+from .graph_learning_algorithm import learn_connected_graph_heavy_tails
 import numpy as np
 import pandas as pd
 

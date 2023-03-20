@@ -1,4 +1,4 @@
-from laplacian_estimator_base import BaseLaplacianEstimator
+from .laplacian_estimator_base import BaseLaplacianEstimator
 import numpy as np
 
 

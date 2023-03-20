@@ -1,10 +1,12 @@
-from configuration_backtester import ConfigBacktester
+from typing import Dict
+
+from .configuration_backtester import ConfigBacktester
 
 import pandas as pd
 
 
 class GridBacktester:
-    def __init__(self, configs: dict[str, ConfigBacktester]):
+    def __init__(self, configs: Dict[str, ConfigBacktester]):
         self._configs = configs
 
     def backtest(self, returns):

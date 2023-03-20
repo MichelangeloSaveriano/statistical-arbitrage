@@ -1,3 +1,3 @@
-from trading_folder.trading_rule_base import TradingRuleBase
-from trading_folder.pairs_distances_trading_rule import PairsDistanceTradingRule
-from trading_folder.spreads_trading_rule import SpreadsTradingRule
+from .trading_folder.trading_rule_base import TradingRuleBase
+from .trading_folder.pairs_distances_trading_rule import PairsDistanceTradingRule
+from .trading_folder.spreads_trading_rule import SpreadsTradingRule

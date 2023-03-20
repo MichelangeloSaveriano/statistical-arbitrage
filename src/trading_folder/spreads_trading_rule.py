@@ -1,6 +1,6 @@
 import pandas as pd
 import numpy as np
-from trading_rule_base import TradingRuleBase
+from .trading_rule_base import TradingRuleBase
 from ..laplacian_estimators import BaseLaplacianEstimator
 
 
@@ -42,7 +42,7 @@ class SpreadsTradingRule(TradingRuleBase):
     def fit(self, train, test=None):
         train_spreads = self.compute_spreads(train)
         lower, upper = np.quantile(train_spreads, (self._q_half, 1 - self._q_half),
-                                   axis=1).reshape((2, -1, 1))
+                                   axis=0).reshape((2, 1, -1))
 
         self._lower = lower
         self._upper = upper

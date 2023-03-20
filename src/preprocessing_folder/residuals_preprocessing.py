@@ -1,4 +1,4 @@
-from preprocessing_base import PreprocessingBase
+from .preprocessing_base import PreprocessingBase
 from sklearn.linear_model import ElasticNet
 
 
