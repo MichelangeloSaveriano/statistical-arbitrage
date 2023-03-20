@@ -1,3 +1,3 @@
-from preprocessing.preprocessing_base import PreprocessingBase
-from preprocessing.no_preprocessing import NoPreprocessing
-from preprocessing.residuals_preprocessing import ResidualsPreprocessing
+from preprocessing_folder.preprocessing_base import PreprocessingBase
+from preprocessing_folder.no_preprocessing import NoPreprocessing
+from preprocessing_folder.residuals_preprocessing import ResidualsPreprocessing

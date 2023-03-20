@@ -1,7 +1,7 @@
 from sklearn.linear_model import ElasticNet
 from trading import *
 from spreads import *
-
+import pandas as pd
 
 def compute_factor_residuals(X_train, factors_train, X_test=None, factors_test=None, alpha_elastic_net=3e-3):
     factor_model = ElasticNet(alpha=alpha_elastic_net, fit_intercept=False).fit(factors_train, X_train)

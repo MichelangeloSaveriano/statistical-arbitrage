@@ -1,6 +1,7 @@
 from preprocessing_base import PreprocessingBase
 from sklearn.linear_model import ElasticNet
 
+
 class ResidualsPreprocessing(PreprocessingBase):
     def __init__(self, factors, alpha_elastic_net=3e-3):
         self._model = None
