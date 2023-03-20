@@ -5,13 +5,14 @@ import pandas as pd
 
 
 class LaplacianGraphLearningLaplacianEstimator(BaseLaplacianEstimator):
-    def __init__(self, distribution='gaussian',
+    def __init__(self, distribution='gaussian', weights=None,
                  normalize=True, w0=None,
                  max_iter=1000, tol=5e-5,
                  d=1, nu=None, verbose=False,
                  use_abs=True,
                  laplacian_root=False, adjust_laplacian=False):
 
+        self._weights = weights
         self._w0 = w0  # weight-init
         self._d = d  # Degree vector
 
@@ -56,6 +57,11 @@ class LaplacianGraphLearningLaplacianEstimator(BaseLaplacianEstimator):
                                                           verbose=self._verbose
                                                           )
         L = results_LGMRF['L']
+
+        if self._weights == 'uniform':
+            A = (np.diag(np.diag(L)) - L) > 1e-3
+            A_weight = A / A.sum(axis=0, keepdims=True)
+            L = np.eye(A_weight.shape[0]) - A_weight
 
         if self._laplacian_root:
             lambdas, V = np.linalg.eigh(L)

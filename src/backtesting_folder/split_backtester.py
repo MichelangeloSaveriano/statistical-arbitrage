@@ -17,7 +17,7 @@ class SplitBacktester:
         return self
 
     def backtest(self, test_returns, test_returns_fwd=None):
-        test_returns = test_returns.loc[:, self._not_na_columns]
+        test_returns = test_returns.loc[:, self._not_na_columns].fillna(0)
 
         if test_returns_fwd is None:
             test_returns_fwd = test_returns.shift(-1).iloc[:-1].copy()
