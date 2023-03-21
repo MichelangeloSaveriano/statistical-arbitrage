@@ -3,6 +3,7 @@ import math
 # from tqdm.notebook import tqdm
 from tqdm import tqdm
 from numba import jit
+from functools import lru_cache
 
 
 def Adj(w):
@@ -274,6 +275,7 @@ compute_augmented_lagrangian_ht <- function(w, LstarSq, Theta, J, Y, y, d, heavy
 '''
 
 
+# @lru_cache(maxsize=None)
 def learn_connected_graph_heavy_tails(X_mat, heavy_type="student",
                                       is_covariance=False,
                                       normalize=True,
@@ -318,7 +320,6 @@ def learn_connected_graph_heavy_tails(X_mat, heavy_type="student",
     # print('L Star Weighted mean:', LstarSweighted.mean(), '\n')
     # print('L Star Weighted Rescaled:\n', LstarSweighted, '\n')
 
-
     J = np.ones((p, p)) / p
 
     # Theta-initilization
@@ -338,7 +339,7 @@ def learn_connected_graph_heavy_tails(X_mat, heavy_type="student",
         LstarLw = LapStar(Lw)
         DstarDw = DegStar(np.diag(Lw))
 
-        if heavy_type == "student" and i % 50 == 0:
+        if not is_covariance and heavy_type == "student" and i % 50 == 0:
             LstarSweighted = sum(map(lambda LstarSq_i: LstarSq_i * compute_student_weights(w, LstarSq_i, p, nu),
                                      LstarSq))
             # print(f'{i}) L Star Weighted: {LstarSweighted}')

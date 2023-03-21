@@ -3,7 +3,6 @@ from .graph_learning_algorithm import learn_connected_graph_heavy_tails
 import numpy as np
 import pandas as pd
 
-
 class LaplacianGraphLearningLaplacianEstimator(BaseLaplacianEstimator):
     def __init__(self, distribution='gaussian', weights=None,
                  normalize=True, w0=None,
@@ -48,15 +47,15 @@ class LaplacianGraphLearningLaplacianEstimator(BaseLaplacianEstimator):
             S_sign = np.sign(S)
             S *= S_sign
 
-        results_LGMRF = learn_connected_graph_heavy_tails(train, heavy_type=self._distribution,
-                                                          is_covariance=False, normalize=self._normalize,
-                                                          nu=self._nu, w0=self._w0, d=self._d,
-                                                          rho=self._rho, update_rho=self._update_rho,
-                                                          max_iter=self._max_iter, tol=self._tol,
-                                                          mu=self._mu, tau=self._tau,
-                                                          verbose=self._verbose
-                                                          )
-        L = results_LGMRF['L']
+        results_learn_graph = learn_connected_graph_heavy_tails(train, heavy_type=self._distribution,
+                                                                is_covariance=False, normalize=self._normalize,
+                                                                nu=self._nu, w0=self._w0, d=self._d,
+                                                                rho=self._rho, update_rho=self._update_rho,
+                                                                max_iter=self._max_iter, tol=self._tol,
+                                                                mu=self._mu, tau=self._tau,
+                                                                verbose=self._verbose
+                                                                )
+        L = results_learn_graph['L']
 
         if self._weights == 'uniform':
             A = (np.diag(np.diag(L)) - L) > 1e-3
