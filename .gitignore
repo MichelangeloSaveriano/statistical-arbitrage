@@ -1,4 +1,5 @@
 # ignore ALL files in the .idea directory
 .idea/ 
 data/
+results/
 Nuovo Documento di testo.txt
