@@ -1,10 +1,10 @@
 import pandas as pd
 import numpy as np
-from .trading_rule_base import TradingRuleBase
+from .trader_base import TraderBase
 from ..laplacian_estimators import BaseLaplacianEstimator
 
 
-class SpreadsTradingRule(TradingRuleBase):
+class SpreadsTrader(TraderBase):
     def __init__(self, laplacian_estimator: BaseLaplacianEstimator, normalize_input=True, q=0.2):
         self._laplacian_estimator = laplacian_estimator
         self._L = None

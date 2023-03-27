@@ -3,7 +3,7 @@ import pandas as pd
 from .split_backtester import SplitBacktester
 
 from ..preprocessing import PreprocessingBase
-from ..trading import TradingRuleBase
+from ..trading import TraderBase
 
 import copy
 from tsxv.splitTrain import split_train
@@ -11,7 +11,7 @@ from concurrent.futures import ThreadPoolExecutor
 
 
 class ConfigBacktester:
-    def __init__(self, preprocessor: PreprocessingBase, trader: TradingRuleBase,
+    def __init__(self, preprocessor: PreprocessingBase, trader: TraderBase,
                  train_window_size=60, split_window_size=12):
         self._preprocessor = preprocessor
         self._trader = trader

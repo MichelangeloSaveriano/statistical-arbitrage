@@ -1,6 +1,6 @@
 import pandas as pd
 import numpy as np
-from .trading_rule_base import TradingRuleBase
+from .trader_base import TraderBase
 
 
 def compute_distance_matrix(data_matrix, use_correlations):
@@ -13,7 +13,7 @@ def compute_distance_matrix(data_matrix, use_correlations):
     return corr.values
 
 
-class PairsDistanceTradingRule(TradingRuleBase):
+class PairsDistanceTrader(TraderBase):
     def __init__(self, p, use_correlations=True, gamma=2):
         self._p = p
         self._use_correlations = use_correlations

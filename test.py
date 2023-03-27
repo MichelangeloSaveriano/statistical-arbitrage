@@ -36,22 +36,22 @@ factors_rf = factors.drop(columns='RF')
 config_backtesters = dict()
 config_backtesters['NoPreprocessing Identity'] = ConfigBacktester(
     preprocessor=NoPreprocessing(),
-    trader=SpreadsTradingRule(laplacian_estimator=LaplacianIdentityLaplacianEstimator())
+    trader=SpreadsTrader(laplacian_estimator=LaplacianIdentityLaplacianEstimator())
 )
 
 config_backtesters['NoPreprocessing Corr-50'] = ConfigBacktester(
     preprocessor=NoPreprocessing(),
-    trader=SpreadsTradingRule(laplacian_estimator=LaplacianCorrKLaplacianEstimator(k=50))
+    trader=SpreadsTrader(laplacian_estimator=LaplacianCorrKLaplacianEstimator(k=50))
 )
 
 config_backtesters['Residuals Identity'] = ConfigBacktester(
     preprocessor=ResidualsPreprocessing(factors_rf),
-    trader=SpreadsTradingRule(laplacian_estimator=LaplacianIdentityLaplacianEstimator())
+    trader=SpreadsTrader(laplacian_estimator=LaplacianIdentityLaplacianEstimator())
 )
 
 config_backtesters['Residuals Corr-50'] = ConfigBacktester(
     preprocessor=ResidualsPreprocessing(factors_rf),
-    trader=SpreadsTradingRule(laplacian_estimator=LaplacianCorrKLaplacianEstimator(k=50)),
+    trader=SpreadsTrader(laplacian_estimator=LaplacianCorrKLaplacianEstimator(k=50)),
 )
 
 # config_backtesters['NoPreprocessing LGMRF'] = ConfigBacktester(

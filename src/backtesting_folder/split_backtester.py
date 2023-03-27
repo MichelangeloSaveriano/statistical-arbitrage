@@ -1,9 +1,9 @@
 from ..preprocessing import PreprocessingBase
-from ..trading import TradingRuleBase
+from ..trading import TraderBase
 
 
 class SplitBacktester:
-    def __init__(self, preprocessor: PreprocessingBase, trader: TradingRuleBase):
+    def __init__(self, preprocessor: PreprocessingBase, trader: TraderBase):
         self._preprocessor = preprocessor
         self._trader = trader
         self._not_na_columns = None
