@@ -32,14 +32,30 @@ factors = factors.loc[idx]
 monthly_log_returns_rf = monthly_log_returns - factors[['RF']].values / 100
 factors_rf = factors.drop(columns='RF')
 
-print(monthly_log_returns_rf.dropna())
 
-X_train = monthly_log_returns_rf.dropna()
+X_train = monthly_log_returns_rf.dropna()# .sample(250, axis=1)
+print(X_train)
 X_train_1 = X_train.values[:60]
-X_train_2 = X_train.values[60:120]
+X_train_2 = X_train.values[12:72]
 X_train_3 = X_train.values[120:]
 
 from src.laplacian_estimators_folder.graph_learning_algorithm import learn_connected_graph_heavy_tails
+from scipy.spatial.distance import cosine
+
+print('\n--- X Train 1 ---\n')
+results1 = learn_connected_graph_heavy_tails(X_train_1, heavy_type='gaussian', verbose=True, max_iter=500, tau=3)
+w1 = results1['w']
+print('\n--- X Train 2 ---\n')
+results2 = learn_connected_graph_heavy_tails(X_train_2, w0=w1, heavy_type='gaussian', verbose=True, max_iter=500,
+                                             rho=1, tau=3)
+w2 = results2['w']
+print('\n--- X Train 2 - No w0 ---\n')
+print(cosine(w1, w2))
+print(w1-w2)
+
+results2 = learn_connected_graph_heavy_tails(X_train_2, heavy_type='gaussian', verbose=True, max_iter=500)
+print('Fine')
+
 
 # Backtest Strategies
 # config_backtesters = dict()

@@ -75,7 +75,7 @@ def learn_connected_graph_heavy_tails(X_mat, heavy_type="student",
                                       d=1, rho=1,
                                       update_rho=True,
                                       max_iter=300,
-                                      tol=1e-5,
+                                      tol=2e-4,
                                       verbose=True,
                                       mu=2, tau=2):
     # number of nodes
@@ -89,6 +89,7 @@ def learn_connected_graph_heavy_tails(X_mat, heavy_type="student",
 
     # w-initialization
     w = initialize_weights(w0, p)
+    w0 = w
 
     # L-star initialization
     if is_covariance:
@@ -142,6 +143,11 @@ def learn_connected_graph_heavy_tails(X_mat, heavy_type="student",
         wi[wi < 0] = 0
         Lwi = Lap(wi)
 
+        if False:  # i < 10 or i % 10 == 0:
+            print(f'{i}) wi: {wi}')
+            print(f'wi - w0 = {wi - w0}')
+
+
         # update Theta
         gamma, V = np.linalg.eigh(rho * (Lwi + J) - Y)
         Thetai = V @ np.diag((gamma + np.sqrt(gamma ** 2 + 4 * rho)) / (2 * rho)) @ V.T - J
@@ -165,6 +171,18 @@ def learn_connected_graph_heavy_tails(X_mat, heavy_type="student",
 
         error = np.linalg.norm(Lwi - Lw, 'fro') / np.linalg.norm(Lw, 'fro')
 
+        if False:  # i < 10 or i % 5 == 0:
+            print(f'\n\nIteration {i}:')
+            print(f'{i}) wi: {wi}')
+            print(f'w0 = {w0}')
+            print(f'LstarLw: {LstarSweighted}')
+            print(f'LstarLw: {LstarLw}')
+            print(f'DstarDw: {DstarDw}')
+            print(f'grad: {grad}')
+            # print(f'R1: {R1}')
+            # print(f'R2: {R2}')
+            print(f'eta: {eta}, rho: {rho}, error: {error}, |wi|: {np.linalg.norm(wi, 2)}, |wi-w0|: {np.linalg.norm(wi-w0, 2)}')
+
         w = wi
         Lw = Lwi
         Theta = Thetai
@@ -173,6 +191,7 @@ def learn_connected_graph_heavy_tails(X_mat, heavy_type="student",
         if has_converged:
             break
 
+    print(f'N Iter: {i}')
     results = {'L': Lap(w),
                'A': Adj(w),
                'w': w,
