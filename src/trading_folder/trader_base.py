@@ -3,13 +3,9 @@ from abc import ABC, abstractmethod
 
 class TraderBase(ABC):
     @abstractmethod
-    def fit(self, train, test=None):
+    def train(self, X_train, y_train=None):
         pass
 
     @abstractmethod
-    def transform(self, test):
+    def compute_trading_mask(self, X_test):
         pass
-
-    def fit_transform(self, train):
-        self.fit(train)
-        return self.transform(train)

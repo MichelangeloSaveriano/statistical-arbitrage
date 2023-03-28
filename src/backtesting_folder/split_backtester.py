@@ -13,7 +13,7 @@ class SplitBacktester:
         train_returns = train_returns.loc[:, self._not_na_columns]
 
         preprocessed_train_returns = self._preprocessor.fit_transform(train_returns)
-        self._trader.fit(preprocessed_train_returns)
+        self._trader.train(preprocessed_train_returns)
         return self
 
     def backtest(self, test_returns, test_returns_fwd=None):
@@ -31,5 +31,5 @@ class SplitBacktester:
 
     def get_trading_mask(self, test_returns):
         preprocessed_test_returns = self._preprocessor.fit_transform(test_returns)
-        trading_mask = self._trader.transform(preprocessed_test_returns)
+        trading_mask = self._trader.compute_trading_mask(preprocessed_test_returns)
         return trading_mask

@@ -34,26 +34,35 @@ factors_rf = factors.drop(columns='RF')
 
 # Backtest Strategies
 config_backtesters = dict()
-config_backtesters['NoPreprocessing Identity'] = ConfigBacktester(
+# config_backtesters['NoPreprocessing Identity'] = ConfigBacktester(
+#     preprocessor=NoPreprocessing(),
+#     trader=SpreadsTrader(laplacian_estimator=LaplacianIdentityLaplacianEstimator())
+# )
+#
+# config_backtesters['NoPreprocessing Corr-50'] = ConfigBacktester(
+#     preprocessor=NoPreprocessing(),
+#     trader=SpreadsTrader(laplacian_estimator=LaplacianCorrKLaplacianEstimator(k=50))
+# )
+#
+# config_backtesters['Residuals Identity'] = ConfigBacktester(
+#     preprocessor=ResidualsPreprocessing(factors_rf),
+#     trader=SpreadsTrader(laplacian_estimator=LaplacianIdentityLaplacianEstimator())
+# )
+#
+# config_backtesters['Residuals Corr-50'] = ConfigBacktester(
+#     preprocessor=ResidualsPreprocessing(factors_rf),
+#     trader=SpreadsTrader(laplacian_estimator=LaplacianCorrKLaplacianEstimator(k=50)),
+# )
+
+config_backtesters['NoPreprocessing Pairs-20'] = ConfigBacktester(
     preprocessor=NoPreprocessing(),
-    trader=SpreadsTrader(laplacian_estimator=LaplacianIdentityLaplacianEstimator())
+    trader=PairsDistanceTrader(20)
 )
 
-config_backtesters['NoPreprocessing Corr-50'] = ConfigBacktester(
-    preprocessor=NoPreprocessing(),
-    trader=SpreadsTrader(laplacian_estimator=LaplacianCorrKLaplacianEstimator(k=50))
-)
-
-config_backtesters['Residuals Identity'] = ConfigBacktester(
+config_backtesters['Residuals Pairs-20'] = ConfigBacktester(
     preprocessor=ResidualsPreprocessing(factors_rf),
-    trader=SpreadsTrader(laplacian_estimator=LaplacianIdentityLaplacianEstimator())
+    trader=PairsDistanceTrader(20)
 )
-
-config_backtesters['Residuals Corr-50'] = ConfigBacktester(
-    preprocessor=ResidualsPreprocessing(factors_rf),
-    trader=SpreadsTrader(laplacian_estimator=LaplacianCorrKLaplacianEstimator(k=50)),
-)
-
 # config_backtesters['NoPreprocessing LGMRF'] = ConfigBacktester(
 #     preprocessor=NoPreprocessing(),
 #     trader=SpreadsTradingRule(laplacian_estimator=LaplacianGraphLearningLaplacianEstimator()),
@@ -64,6 +73,6 @@ backtester = GridBacktester(config_backtesters, verbose=True)
 
 config_returns = backtester.backtest(monthly_log_returns)
 print(config_returns)
-print(config_returns.corr())
-print(np.exp(np.mean(np.log(1+config_returns)) * 12))
+# print(config_returns.corr())
+print((np.exp(np.log(1+config_returns).mean() * 12) - 1) * 100)
 

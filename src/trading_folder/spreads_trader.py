@@ -39,8 +39,8 @@ class SpreadsTrader(TraderBase):
 
         return train_spreads, self.compute_spreads(test)
 
-    def fit(self, train, test=None):
-        train_spreads = self.compute_spreads(train)
+    def train(self, X_train, y_train=None):
+        train_spreads = self.compute_spreads(X_train)
         lower, upper = np.quantile(train_spreads, (self._q_half, 1 - self._q_half),
                                    axis=0).reshape((2, 1, -1))
 
@@ -49,8 +49,8 @@ class SpreadsTrader(TraderBase):
 
         return self
 
-    def transform(self, test):
-        test_spreads = self.compute_spreads(test)
+    def compute_trading_mask(self, X_test):
+        test_spreads = self.compute_spreads(X_test)
 
         lower, upper = np.quantile(test_spreads, (self._q_half, 1 - self._q_half),
                                    axis=1).reshape((2, -1, 1))
