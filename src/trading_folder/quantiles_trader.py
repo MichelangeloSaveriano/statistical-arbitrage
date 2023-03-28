@@ -34,5 +34,9 @@ class QuantilesTrader(TraderBase):
 
         return long_mask - short_mask
 
+    def set_q(self, q):
+        self._q = q
+        self._q_half = self._q / 2
+
 
 QuantilesTradingRule = QuantilesTrader

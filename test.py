@@ -43,10 +43,10 @@ config_backtesters['NoPreprocessing Identity, Quantiles'] = ConfigBacktester(
     trader=QuantilesTrader()
 )
 
-# config_backtesters['NoPreprocessing Corr-50'] = ConfigBacktester(
-#     preprocessor=NoPreprocessing(),
-#     trader=SpreadsTrader(laplacian_estimator=LaplacianCorrKLaplacianEstimator(k=50))
-# )
+config_backtesters['NoPreprocessing Corr-50'] = ConfigBacktester(
+    preprocessor=NoPreprocessing(),
+    trader=SpreadsTrader(laplacian_estimator=LaplacianCorrKLaplacianEstimator(k=50))
+)
 
 config_backtesters['Residuals Identity'] = ConfigBacktester(
     preprocessor=ResidualsPreprocessing(factors_rf),
@@ -58,10 +58,10 @@ config_backtesters['Residuals Identity Quantiles'] = ConfigBacktester(
     trader=QuantilesTrader()
 )
 
-# config_backtesters['Residuals Corr-50'] = ConfigBacktester(
-#     preprocessor=ResidualsPreprocessing(factors_rf),
-#     trader=SpreadsTrader(laplacian_estimator=LaplacianCorrKLaplacianEstimator(k=50)),
-# )
+config_backtesters['Residuals Corr-50'] = ConfigBacktester(
+    preprocessor=ResidualsPreprocessing(factors_rf),
+    trader=SpreadsTrader(laplacian_estimator=LaplacianCorrKLaplacianEstimator(k=50)),
+)
 
 # config_backtesters['NoPreprocessing Pairs-20'] = ConfigBacktester(
 #     preprocessor=NoPreprocessing(),
