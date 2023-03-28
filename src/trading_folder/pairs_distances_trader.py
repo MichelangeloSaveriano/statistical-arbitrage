@@ -2,7 +2,7 @@ import pandas as pd
 import numpy as np
 from sklearn.metrics import pairwise_distances
 from .trader_base import TraderBase
-from .std_trading_rule import StdTradingRule
+from .std_trader import StdTradingRule
 
 
 def compute_distance_matrix(data_matrix, metric='correlation', use_returns=True):

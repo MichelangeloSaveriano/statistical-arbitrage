@@ -34,35 +34,44 @@ factors_rf = factors.drop(columns='RF')
 
 # Backtest Strategies
 config_backtesters = dict()
-# config_backtesters['NoPreprocessing Identity'] = ConfigBacktester(
-#     preprocessor=NoPreprocessing(),
-#     trader=SpreadsTrader(laplacian_estimator=LaplacianIdentityLaplacianEstimator())
-# )
-#
+config_backtesters['NoPreprocessing Identity'] = ConfigBacktester(
+    preprocessor=NoPreprocessing(),
+    trader=SpreadsTrader(laplacian_estimator=LaplacianIdentityLaplacianEstimator())
+)
+config_backtesters['NoPreprocessing Identity, Quantiles'] = ConfigBacktester(
+    preprocessor=NoPreprocessing(),
+    trader=QuantilesTrader()
+)
+
 # config_backtesters['NoPreprocessing Corr-50'] = ConfigBacktester(
 #     preprocessor=NoPreprocessing(),
 #     trader=SpreadsTrader(laplacian_estimator=LaplacianCorrKLaplacianEstimator(k=50))
 # )
-#
-# config_backtesters['Residuals Identity'] = ConfigBacktester(
-#     preprocessor=ResidualsPreprocessing(factors_rf),
-#     trader=SpreadsTrader(laplacian_estimator=LaplacianIdentityLaplacianEstimator())
-# )
-#
+
+config_backtesters['Residuals Identity'] = ConfigBacktester(
+    preprocessor=ResidualsPreprocessing(factors_rf),
+    trader=SpreadsTrader(laplacian_estimator=LaplacianIdentityLaplacianEstimator())
+)
+
+config_backtesters['Residuals Identity Quantiles'] = ConfigBacktester(
+    preprocessor=ResidualsPreprocessing(factors_rf),
+    trader=QuantilesTrader()
+)
+
 # config_backtesters['Residuals Corr-50'] = ConfigBacktester(
 #     preprocessor=ResidualsPreprocessing(factors_rf),
 #     trader=SpreadsTrader(laplacian_estimator=LaplacianCorrKLaplacianEstimator(k=50)),
 # )
 
-config_backtesters['NoPreprocessing Pairs-20'] = ConfigBacktester(
-    preprocessor=NoPreprocessing(),
-    trader=PairsDistanceTrader(20)
-)
-
-config_backtesters['Residuals Pairs-20'] = ConfigBacktester(
-    preprocessor=ResidualsPreprocessing(factors_rf),
-    trader=PairsDistanceTrader(20)
-)
+# config_backtesters['NoPreprocessing Pairs-20'] = ConfigBacktester(
+#     preprocessor=NoPreprocessing(),
+#     trader=PairsDistanceTrader(20)
+# )
+#
+# config_backtesters['Residuals Pairs-20'] = ConfigBacktester(
+#     preprocessor=ResidualsPreprocessing(factors_rf),
+#     trader=PairsDistanceTrader(20)
+# )
 # config_backtesters['NoPreprocessing LGMRF'] = ConfigBacktester(
 #     preprocessor=NoPreprocessing(),
 #     trader=SpreadsTradingRule(laplacian_estimator=LaplacianGraphLearningLaplacianEstimator()),
