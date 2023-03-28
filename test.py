@@ -15,7 +15,7 @@ raw_monthly_prices['year_month'] = raw_monthly_prices['year'].astype(str) + ('00
 raw_monthly_prices = raw_monthly_prices.set_index('year_month').drop(columns=['year', 'month', 'Date'])
 monthly_prices = raw_monthly_prices.loc[:, raw_monthly_prices.isna().mean(axis=0) < .5]
 monthly_log_returns = np.log(monthly_prices).diff().iloc[1:]
-print(monthly_log_returns)
+# print(monthly_log_returns)
 
 # Load Factors
 factors = pd.read_csv("./data/F-F_Research_Data_5_Factors_2x3.csv", skiprows=2)
@@ -32,36 +32,33 @@ factors = factors.loc[idx]
 monthly_log_returns_rf = monthly_log_returns - factors[['RF']].values / 100
 factors_rf = factors.drop(columns='RF')
 
+print(monthly_log_returns_rf.dropna())
+
+X_train = monthly_log_returns_rf.dropna()
+X_train_1 = X_train.values[:60]
+X_train_2 = X_train.values[60:120]
+X_train_3 = X_train.values[120:]
+
+from src.laplacian_estimators_folder.graph_learning_algorithm import learn_connected_graph_heavy_tails
+
 # Backtest Strategies
-config_backtesters = dict()
-config_backtesters['NoPreprocessing Identity'] = ConfigBacktester(
-    preprocessor=NoPreprocessing(),
-    trader=SpreadsTrader(laplacian_estimator=LaplacianIdentityLaplacianEstimator())
-)
-config_backtesters['NoPreprocessing Identity, Quantiles'] = ConfigBacktester(
-    preprocessor=NoPreprocessing(),
-    trader=QuantilesTrader()
-)
-
-config_backtesters['NoPreprocessing Corr-50'] = ConfigBacktester(
-    preprocessor=NoPreprocessing(),
-    trader=SpreadsTrader(laplacian_estimator=LaplacianCorrKLaplacianEstimator(k=50))
-)
-
-config_backtesters['Residuals Identity'] = ConfigBacktester(
-    preprocessor=ResidualsPreprocessing(factors_rf),
-    trader=SpreadsTrader(laplacian_estimator=LaplacianIdentityLaplacianEstimator())
-)
-
-config_backtesters['Residuals Identity Quantiles'] = ConfigBacktester(
-    preprocessor=ResidualsPreprocessing(factors_rf),
-    trader=QuantilesTrader()
-)
-
-config_backtesters['Residuals Corr-50'] = ConfigBacktester(
-    preprocessor=ResidualsPreprocessing(factors_rf),
-    trader=SpreadsTrader(laplacian_estimator=LaplacianCorrKLaplacianEstimator(k=50)),
-)
+# config_backtesters = dict()
+# config_backtesters['NoPreprocessing Identity'] = ConfigBacktester(
+#     preprocessor=NoPreprocessing(),
+#     trader=SpreadsTrader(laplacian_estimator=LaplacianIdentityLaplacianEstimator())
+# )
+# config_backtesters['NoPreprocessing Corr-50'] = ConfigBacktester(
+#     preprocessor=NoPreprocessing(),
+#     trader=SpreadsTrader(laplacian_estimator=LaplacianCorrKLaplacianEstimator(k=50))
+# )
+# config_backtesters['Residuals Identity'] = ConfigBacktester(
+#     preprocessor=ResidualsPreprocessing(factors_rf),
+#     trader=SpreadsTrader(laplacian_estimator=LaplacianIdentityLaplacianEstimator())
+# )
+# config_backtesters['Residuals Corr-50'] = ConfigBacktester(
+#     preprocessor=ResidualsPreprocessing(factors_rf),
+#     trader=SpreadsTrader(laplacian_estimator=LaplacianCorrKLaplacianEstimator(k=50)),
+# )
 
 # config_backtesters['NoPreprocessing Pairs-20'] = ConfigBacktester(
 #     preprocessor=NoPreprocessing(),
@@ -78,10 +75,10 @@ config_backtesters['Residuals Corr-50'] = ConfigBacktester(
 #     split_window_size=36
 # )
 
-backtester = GridBacktester(config_backtesters, verbose=True)
-
-config_returns = backtester.backtest(monthly_log_returns)
-print(config_returns)
-# print(config_returns.corr())
-print((np.exp(np.log(1+config_returns).mean() * 12) - 1) * 100)
+# backtester = GridBacktester(config_backtesters, verbose=True)
+#
+# config_returns = backtester.backtest(monthly_log_returns)
+# print(config_returns)
+# # print(config_returns.corr())
+# print((np.exp(np.log(1+config_returns).mean() * 12) - 1) * 100)
 
