@@ -10,11 +10,19 @@ class GridBacktester:
         self._configs = configs
         self._verbose = verbose
 
-    def backtest(self, returns):
-        items = self._configs.items()
+    def fit(self, returns):
+        backtesters = self._configs.values()
         if self._verbose:
-            items = tqdm(self._configs.items())
+            backtesters = tqdm(self._configs.values())
 
+        for backtester in backtesters:
+            backtester.fit(returns)
+
+    def backtest(self, returns):
         return pd.DataFrame({
-            config_name: backtester.backtest(returns) for config_name, backtester in items
+            config_name: backtester.backtest(returns) for config_name, backtester in self._configs.items()
         })
+
+    def fit_backtest(self, returns):
+        self.fit(returns)
+        return self.backtest(returns)
