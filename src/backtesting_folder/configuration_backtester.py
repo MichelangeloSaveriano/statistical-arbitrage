@@ -1,4 +1,5 @@
 import pandas as pd
+from typing import List
 
 from .split_backtester import SplitBacktester
 
@@ -12,7 +13,7 @@ from concurrent.futures import ThreadPoolExecutor
 
 class ConfigBacktester:
     def __init__(self, preprocessor: PreprocessingBase, trader: TraderBase,
-                 train_window_size=60, split_window_size=12):
+                 train_window_size: int = 60, split_window_size: int = 12):
         self._preprocessor = preprocessor
         self._trader = trader
         self._train_window_size = train_window_size
@@ -39,4 +40,18 @@ class ConfigBacktester:
                             for idx, backtester in zip(test_idx, self._split_backtesters)]
         return pd.concat(strategy_returns)
 
-        # return pd.concat()
+    @property
+    def split_backtesters(self) -> List[SplitBacktester]:
+        return self._split_backtesters
+
+    @property
+    def train_window_size(self) -> int:
+        return self._train_window_size
+
+    @property
+    def split_window_size(self) -> int:
+        return self._split_window_size
+
+    @property
+    def trader_template(self):
+        return self._trader

@@ -37,9 +37,6 @@ class LaplacianGraphLearningLaplacianEstimator(BaseLaplacianEstimator):
         self._verbose = verbose
 
     def fit_laplacian(self, train):
-        if isinstance(train, pd.DataFrame):
-            train = train.values
-
         S = train.T @ train
         S_sign = np.ones_like(S)
 

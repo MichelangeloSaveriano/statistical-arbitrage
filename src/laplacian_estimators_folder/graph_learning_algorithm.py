@@ -1,7 +1,6 @@
 import numpy as np
 import math
 from tqdm import tqdm
-from numba import jit
 
 
 def Adj(w):

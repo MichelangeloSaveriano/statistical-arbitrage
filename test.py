@@ -32,25 +32,48 @@ factors = factors.loc[idx]
 monthly_log_returns_rf = monthly_log_returns - factors[['RF']].values / 100
 factors_rf = factors.drop(columns='RF')
 
+# trading_rules_dict = ({f'decile-{d}': BuyDecileTradingRule(d) for d in range(1, 11)} |
+#                       {'q=0.2': QuantilesTradingRule(q=0.2)})
+
+n_splits = 20
+trading_rules_dict = ({f'quantile-{d}': BuyQuantileTradingRule(n_splits, d) for d in range(1, n_splits+1)} |
+                      {'q=0.2': QuantilesTradingRule(q=0.2)})
 
 # Backtest Strategies
 config_backtesters = dict()
-# config_backtesters['NoPreprocessing Identity'] = ConfigBacktester(
-#     preprocessor=NoPreprocessing(),
-#     trader=SpreadsTrader(laplacian_estimator=LaplacianIdentityLaplacianEstimator())
-# )
+config_backtesters['NoPreprocessing Identity'] = ConfigBacktester(
+    preprocessor=NoPreprocessing(),
+    trader=SpreadsTrader(
+        laplacian_estimator=LaplacianIdentityLaplacianEstimator(),
+        # trading_rule=[QuantilesTradingRule(q=0.2), QuantilesTradingRule(q=0.1)],
+        trading_rule=trading_rules_dict
+    )
+)
+
 config_backtesters['NoPreprocessing Corr-50'] = ConfigBacktester(
     preprocessor=NoPreprocessing(),
-    trader=SpreadsTrader(laplacian_estimator=LaplacianCorrKLaplacianEstimator(k=50))
+    trader=SpreadsTrader(
+        laplacian_estimator=LaplacianCorrKLaplacianEstimator(k=50),
+        # trading_rule=[QuantilesTradingRule(q=0.2), QuantilesTradingRule(q=0.1)]
+        # trading_rule={'q=0.2': QuantilesTradingRule(q=0.2),
+        #               'q=0.1': QuantilesTradingRule(q=0.1)}
+        trading_rule=trading_rules_dict
+    )
 )
-# config_backtesters['Residuals Identity'] = ConfigBacktester(
-#     preprocessor=ResidualsPreprocessing(factors_rf),
-#     trader=SpreadsTrader(laplacian_estimator=LaplacianIdentityLaplacianEstimator())
-# )
-# config_backtesters['Residuals Corr-50'] = ConfigBacktester(
-#     preprocessor=ResidualsPreprocessing(factors_rf),
-#     trader=SpreadsTrader(laplacian_estimator=LaplacianCorrKLaplacianEstimator(k=50)),
-# )
+config_backtesters['Residuals Identity'] = ConfigBacktester(
+    preprocessor=ResidualsPreprocessing(factors_rf),
+    trader=SpreadsTrader(
+        laplacian_estimator=LaplacianIdentityLaplacianEstimator(),
+        trading_rule=trading_rules_dict
+    )
+)
+config_backtesters['Residuals Corr-50'] = ConfigBacktester(
+    preprocessor=ResidualsPreprocessing(factors_rf),
+    trader=SpreadsTrader(
+        laplacian_estimator=LaplacianCorrKLaplacianEstimator(k=50),
+        trading_rule=trading_rules_dict
+    ),
+)
 
 # config_backtesters['NoPreprocessing Pairs-20'] = ConfigBacktester(
 #     preprocessor=NoPreprocessing(),
@@ -73,5 +96,6 @@ config_returns = backtester.fit_backtest(monthly_log_returns)
 print(config_returns)
 # print(config_returns.corr())
 print((np.exp(np.log(1+config_returns).mean() * 12) - 1) * 100)
+print(config_returns.std() / np.sqrt(len(config_returns)))
 print(config_returns.index[:30])
 
