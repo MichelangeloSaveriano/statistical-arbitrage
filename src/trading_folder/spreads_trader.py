@@ -61,11 +61,9 @@ class SpreadsTrader(TraderBase):
 
         return self
 
-    def compute_trading_mask(self, X_test: pd.DataFrame) -> pd.DataFrame | list[pd.DataFrame] | dict[pd.DataFrame]:
+    def compute_trading_mask(self, X_test: pd.DataFrame) -> pd.DataFrame | dict[pd.DataFrame]:
         test_spreads = self.compute_spreads(X_test)
 
-        if isinstance(self._trading_rule, list):
-            return [trader.compute_trading_mask(test_spreads) for trader in self._trading_rule]
         if isinstance(self._trading_rule, dict):
             return {trader_name: trader.compute_trading_mask(test_spreads)
                     for trader_name, trader in self._trading_rule.items()}

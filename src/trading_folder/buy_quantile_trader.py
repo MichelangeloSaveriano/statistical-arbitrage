@@ -17,7 +17,7 @@ class BuyQuantileTrader(TraderBase):
               y_train: pd.DataFrame = None) -> pd.DataFrame | tuple[pd.DataFrame, pd.DataFrame]:
         pass
 
-    def compute_trading_mask(self, X_test: pd.DataFrame):
+    def compute_trading_mask(self, X_test: pd.DataFrame) -> pd.DataFrame:
         lower, upper = np.quantile(X_test, (self._lower_q, self._upper_q),
                                    axis=1).reshape((2, -1, 1))
 

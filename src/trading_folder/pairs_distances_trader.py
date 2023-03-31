@@ -1,7 +1,8 @@
 import pandas as pd
 import numpy as np
+from typing import Self
 from sklearn.metrics import pairwise_distances
-from .trader_base import TraderBase
+from .trader_base import TraderBase, TradingRule
 from .std_trader import StdTradingRule
 
 
@@ -31,8 +32,9 @@ def compute_minimum_distance_pairs(X_train, p, metric, use_returns):
 
 
 class PairsDistanceTrader(TraderBase):
-    def __init__(self, p, trading_rule=None, metric='correlation',
-                 use_returns=True, weighting=None):
+    def __init__(self, p: int,
+                 trading_rule: TradingRule | list[TradingRule] | dict[str, TradingRule] = None,
+                 metric: str = 'correlation', use_returns: bool = True, weighting: str = None):
         # Number of pairs
         self._p = p
 
@@ -44,14 +46,15 @@ class PairsDistanceTrader(TraderBase):
         self._trading_rule = trading_rule
         if self._trading_rule is None:
             self._trading_rule = StdTradingRule()
+        elif isinstance(trading_rule, list):
+            self._trading_rule = dict(zip(range(len(trading_rule)), trading_rule))
+
         self._weighting = weighting
 
-
-    def train(self, X_train, y_train=None):
+    def train(self, X_train: pd.DataFrame,
+              y_train: pd.DataFrame = None) -> Self:
         n_assets = X_train.shape[1]
-        data_matrix = X_train
-        if isinstance(X_train, pd.DataFrame):
-            data_matrix = X_train.values
+        data_matrix = X_train.values
 
         self._pairs = compute_minimum_distance_pairs(X_train, self._p,
                                                      self._metric,
@@ -62,16 +65,37 @@ class PairsDistanceTrader(TraderBase):
         self._B[self._pairs[1], np.arange(self._p)] = -1
 
         pairs_distances = data_matrix @ self._B
-        self._trading_rule.train(pairs_distances)
 
-    def compute_trading_mask(self, X_test):
-        data_matrix = X_test
-        if isinstance(X_test, pd.DataFrame):
-            data_matrix = X_test.values
+        if isinstance(self._trading_rule, dict):
+            for trader in self._trading_rule.values():
+                trader.train(pairs_distances)
+        else:
+            self._trading_rule.train(pairs_distances)
 
-        pairs_distances = data_matrix @ self._B
+        return self
+
+    def compute_trading_mask(self, X_test: pd.DataFrame) -> pd.DataFrame | dict[pd.DataFrame]:
+        pairs_distances = pd.DataFrame(X_test @ self._B)
+
+        if isinstance(self._trading_rule, dict):
+            trading_mask_dict = dict()
+            for trading_rule_name, trading_rule in self._trading_rule.items():
+                pairs_trading_mask = trading_rule.compute_trading_mask(pairs_distances)
+                trading_mask = self.pairs_trading_mask_to_asset_trading_mask(pairs_trading_mask).fillna(0)
+                trading_mask.index = X_test.index
+                trading_mask.columns = X_test.columns
+                trading_mask_dict[trading_rule_name] = trading_mask
+
+            return trading_mask_dict
+
         pairs_trading_mask = self._trading_rule.compute_trading_mask(pairs_distances)
-        trading_mask = pairs_trading_mask @ self._B.T
+        trading_mask = pd.DataFrame(self.pairs_trading_mask_to_asset_trading_mask(pairs_trading_mask),
+                                    index=X_test.index, columns=X_test.columns).fillna(0)
+
+        return trading_mask
+
+    def pairs_trading_mask_to_asset_trading_mask(self, pairs_trading_mask: pd.DataFrame) -> pd.DataFrame:
+        trading_mask = pairs_trading_mask.values @ self._B.T
 
         short_mask = (trading_mask < 0).astype(float)
         long_mask = (trading_mask > 0).astype(float)
@@ -84,10 +108,4 @@ class PairsDistanceTrader(TraderBase):
         long_mask /= np.fmax(1e-6, long_mask.sum(axis=1).reshape((-1, 1)))
 
         trading_mask = long_mask - short_mask
-
-        if isinstance(X_test, pd.DataFrame):
-            trading_mask = pd.DataFrame(trading_mask,
-                                        index=X_test.index, columns=X_test.columns)
-            trading_mask.fillna(0)
-
-        return trading_mask
+        return pd.DataFrame(trading_mask)
