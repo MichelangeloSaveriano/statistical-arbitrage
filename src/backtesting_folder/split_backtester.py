@@ -47,9 +47,9 @@ class SplitBacktester:
                                  for trading_rule_name, mask in trading_mask.items()})
 
         trading_returns = (test_returns_fwd * trading_mask).sum(axis=1)
-        print(type(trading_returns))
+        # print(type(trading_returns))
 
-        return pd.DataFrame(trading_returns)
+        return pd.DataFrame(trading_returns).rename_axis(columns='TradingRule')
 
     def get_trading_mask(self,
                          test_returns: pd.DataFrame) -> pd.DataFrame:

@@ -38,7 +38,7 @@ class ConfigBacktester:
 
         strategy_returns = [backtester.backtest(returns.loc[idx])
                             for idx, backtester in zip(test_idx, self._split_backtesters)]
-        return pd.concat(strategy_returns)
+        return pd.concat(strategy_returns).rename_axis(columns='TradingRule')
 
     @property
     def split_backtesters(self) -> List[SplitBacktester]:

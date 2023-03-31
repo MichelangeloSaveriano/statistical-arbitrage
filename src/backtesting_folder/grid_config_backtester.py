@@ -30,8 +30,12 @@ class GridBacktester:
         # result_dataframes_dict = {
         #     config_name: backtester.backtest(returns)[0] for config_name, backtester in self._backtesters_dict.items()
         # }
-
-        return pd.concat(result_dataframes.values(), axis=1, keys=result_dataframes.keys())
+        result = pd.concat(result_dataframes.values(), axis=1, keys=result_dataframes.keys())
+        if len(result.columns.names) == 2:
+            result = result.rename_axis(columns=['Strategy', 'TradingRule'])
+        else:
+            result = result.rename_axis(columns='Strategy')
+        return result
         # return pd.DataFrame(result_dataframes_dict)
 
     def fit_backtest(self, returns):
