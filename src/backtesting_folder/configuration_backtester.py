@@ -1,5 +1,4 @@
 import pandas as pd
-from typing import List
 
 from .split_backtester import SplitBacktester
 
@@ -24,7 +23,7 @@ class ConfigBacktester:
         train_idx, test_idx = split_train(returns.index.values, numInputs=self._train_window_size,
                                           numOutputs=self._split_window_size + 1, numJumps=self._split_window_size)
 
-        executor = ThreadPoolExecutor()
+        executor = ThreadPoolExecutor(max_workers=6)
         self._split_backtesters = list(
             executor.map(lambda idx: SplitBacktester(preprocessor=copy.deepcopy(self._preprocessor),
                                                      trader=copy.deepcopy(self._trader)).fit(returns.loc[idx]),
@@ -41,7 +40,7 @@ class ConfigBacktester:
         return pd.concat(strategy_returns).rename_axis(columns='TradingRule')
 
     @property
-    def split_backtesters(self) -> List[SplitBacktester]:
+    def split_backtesters(self) -> list[SplitBacktester]:
         return self._split_backtesters
 
     @property

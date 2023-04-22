@@ -1,6 +1,5 @@
 import pandas as pd
 import numpy as np
-from typing import Self
 from sklearn.metrics import pairwise_distances
 from .trader_base import TraderBase, TradingRule
 from .std_trader import StdTradingRule
@@ -52,7 +51,7 @@ class PairsDistanceTrader(TraderBase):
         self._weighting = weighting
 
     def train(self, X_train: pd.DataFrame,
-              y_train: pd.DataFrame = None) -> Self:
+              y_train: pd.DataFrame = None):
         n_assets = X_train.shape[1]
         data_matrix = X_train.values
 

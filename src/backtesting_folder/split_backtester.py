@@ -1,5 +1,4 @@
 import pandas as pd
-from typing import Self
 from ..preprocessing import PreprocessingBase
 from ..trading import TraderBase
 
@@ -10,7 +9,7 @@ class SplitBacktester:
         self._trader = trader
         self._not_na_columns = None
 
-    def fit(self, train_returns: pd.DataFrame) -> Self:
+    def fit(self, train_returns: pd.DataFrame):
         self._not_na_columns = ~train_returns.isna().any(axis=0)
         train_returns = train_returns.loc[:, self._not_na_columns]
 

@@ -190,7 +190,7 @@ def learn_connected_graph_heavy_tails(X_mat, heavy_type="student",
         if has_converged:
             break
 
-    print(f'N Iter: {i}')
+    # print(f'N Iter: {i}')
     results = {'L': Lap(w),
                'A': Adj(w),
                'w': w,
